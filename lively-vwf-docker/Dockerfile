@@ -1,7 +1,7 @@
 FROM          lively-server
 MAINTAINER    Robert Krahn <robert.krahn@gmail.com>
 
-RUN cd /var/www && git clone -b branch/morph https://github.com/LivelyKernel/vwf --recursive
+RUN cd /var/www && git clone https://github.com/virtual-world-framework/vwf.git --recursive
 
 ENV LIVELY /var/www/LivelyKernel
 ENV VWF /var/www/vwf
@@ -19,6 +19,11 @@ RUN git apply --directory $LIVELY/ $LIVELY/requirejs.patch
 ENV livelyport 9001
 ENV vwfport 3000
 
+EXPOSE 8080
+EXPOSE 8081
+EXPOSE 8082
+EXPOSE 8083
+
 CMD cd $LIVELY; \
     forever start bin/lk-server.js -p $livelyport; \
     cd $VWF; \
@@ -27,7 +32,7 @@ CMD cd $LIVELY; \
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # docker build --rm -t lively-vwf-server .
 # docker run -p 9001:9001 -p 3000:3000 -t -i lively-vwf-server
-# docker build --rm -t old-lively-vwf-server . && docker run -p 9001:9001 -p 3000:3000 -t -i old-lively-vwf-server
+# docker build --rm -t current-lively-vwf-server . && ./start-server.sh 9005 3006
 
 # a checkout of this branch
 # git clone -b vwf-compat https://github.com/LivelyKernel/LivelyKernel.git public/lively
