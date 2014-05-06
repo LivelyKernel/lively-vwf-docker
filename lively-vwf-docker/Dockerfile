@@ -2,13 +2,22 @@ FROM          lively-server
 MAINTAINER    Robert Krahn <robert.krahn@gmail.com>
 
 RUN cd /var/www && git clone -b branch/morph https://github.com/LivelyKernel/vwf --recursive
+
+ENV LIVELY /var/www/LivelyKernel
+ENV VWF /var/www/vwf
 WORKDIR /var/www/vwf
 #RUN git checkout master
 RUN npm install
 
-RUN curl https://gist.githubusercontent.com/rksm/8037313/raw/gistfile1.js > /var/www/LivelyKernel/core/lively/localconfig.js
+ADD localconfig.js $LIVELY/core/lively/localconfig.js
 
-CMD cd /var/www/LivelyKernel; forever start bin/lk-server.js -p 9001; cd /var/www/vwf; node node-server.js -l 100 -a /var/www/LivelyKernel
+ADD requirejs-require-global.patch $LIVELY/requirejs-require-global.patch
+ADD requirejs-lib.patch $LIVELY/requirejs-lib.patch
+
+RUN git apply --directory $LIVELY/core/lively/ $LIVELY/requirejs-require-global.patch
+RUN git apply --directory $LIVELY/core/lib/ $LIVELY/requirejs-lib.patch
+
+CMD cd $LIVELY; forever start bin/lk-server.js -p 9001; cd $VWF; node node-server.js -l 100 -a $LIVELY
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # docker build --rm -t lively-vwf-server .

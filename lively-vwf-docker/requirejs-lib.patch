@@ -1,0 +1,30 @@
+diff --git a/core/lib/lively-libs-nodejs.js b/core/lib/lively-libs-nodejs.js
+index 6697cbc..2ee5b96 100644
+--- a/core/lib/lively-libs-nodejs.js
++++ b/core/lib/lively-libs-nodejs.js
+@@ -9540,16 +9540,16 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
+ 
+ // Module systems magic dance
+ (function (definition) {
+-    // RequireJS
+-    if (typeof define == "function") {
+-        define(definition);
+-    // YUI3
+-    } else if (typeof YUI == "function") {
+-        YUI.add("es5", definition);
+-    // CommonJS and <script>
+-    } else {
++    // // RequireJS
++    // if (typeof define == "function") {
++    //     define(definition);
++    // // YUI3
++    // } else if (typeof YUI == "function") {
++    //     YUI.add("es5", definition);
++    // // CommonJS and <script>
++    // } else {
+         definition();
+-    }
++    // }
+ })(function () {
+ 
+ /**
