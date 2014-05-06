@@ -1,0 +1,66 @@
+diff --git a/core/lib/lively-libs-nodejs.js b/core/lib/lively-libs-nodejs.js
+index 6697cbc..2ee5b96 100644
+--- a/core/lib/lively-libs-nodejs.js
++++ b/core/lib/lively-libs-nodejs.js
+@@ -9540,16 +9540,16 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
+ 
+ // Module systems magic dance
+ (function (definition) {
+-    // RequireJS
+-    if (typeof define == "function") {
+-        define(definition);
+-    // YUI3
+-    } else if (typeof YUI == "function") {
+-        YUI.add("es5", definition);
+-    // CommonJS and <script>
+-    } else {
++    // // RequireJS
++    // if (typeof define == "function") {
++    //     define(definition);
++    // // YUI3
++    // } else if (typeof YUI == "function") {
++    //     YUI.add("es5", definition);
++    // // CommonJS and <script>
++    // } else {
+         definition();
+-    }
++    // }
+ })(function () {
+ 
+ /**
+diff --git a/core/lively/ModuleSystem.js b/core/lively/ModuleSystem.js
+index 937a23b..da26859 100644
+--- a/core/lively/ModuleSystem.js
++++ b/core/lively/ModuleSystem.js
+@@ -135,7 +135,7 @@ Object.extend(lively, {
+         lively.require.counter !== undefined ? lively.require.counter++ : lively.require.counter = 0;
+         var m = lively.module(getUniqueName()).beAnonymous();
+         if (lively.Config.showModuleDefStack)
+-            try { throw new Error() } catch(e) { m.defStack = e.stack }
++            m.defStack = new Error().stack;
+         return m.requires(Object.isArray(args[0]) ? args[0] : args);
+     }
+ 
+@@ -508,8 +508,21 @@ var Module = Object.subclass('lively.Module',
+     for (var name in helper) lively[name] = helper[name];
+     lively.Module = Module;
+     Global.module = lively.module;
+-    Global.require = lively.require;
++    // Global.require = lively.require;
+     Global.lively = lively;
++
++;(function fixForRequireJS(Global) {
++    // var requirejs = requirejs.s.contexts._.require;
++    var requirejs = Global.require;
++    Global.require = function(/*args*/) {
++        var defStack = String(new Error().stack);
++        if (defStack.include('vwf.js'))
++            return requirejs.apply(window, arguments);
++        else
++            return lively.require.apply(Global, arguments);
++    };
++})(Global);
++
+ })(Global);
+ 
+ Object.extend(lively.Module, {
