@@ -16,10 +16,13 @@ ADD localconfig.js $LIVELY/core/lively/localconfig.js
 ADD requirejs.patch $LIVELY/requirejs.patch
 RUN git apply --directory $LIVELY/ $LIVELY/requirejs.patch
 
+ENV livelyport 9001
+ENV vwfport 3000
+
 CMD cd $LIVELY; \
-    forever start bin/lk-server.js -p 9001; \
+    forever start bin/lk-server.js -p $livelyport; \
     cd $VWF; \
-    node node-server.js -l 100 -a $LIVELY
+    node node-server.js -p $vwfport -l 100 -a $LIVELY
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # docker build --rm -t lively-vwf-server .
