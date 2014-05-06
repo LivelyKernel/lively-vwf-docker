@@ -9,15 +9,17 @@ WORKDIR /var/www/vwf
 #RUN git checkout master
 RUN npm install
 
+# make lively load without deserialization
 ADD localconfig.js $LIVELY/core/lively/localconfig.js
 
-ADD requirejs-require-global.patch $LIVELY/requirejs-require-global.patch
-ADD requirejs-lib.patch $LIVELY/requirejs-lib.patch
+# apply patch to solve require() name clash
+ADD requirejs.patch $LIVELY/requirejs.patch
+RUN git apply --directory $LIVELY/ $LIVELY/requirejs.patch
 
-RUN git apply --directory $LIVELY/core/lively/ $LIVELY/requirejs-require-global.patch
-RUN git apply --directory $LIVELY/core/lib/ $LIVELY/requirejs-lib.patch
-
-CMD cd $LIVELY; forever start bin/lk-server.js -p 9001; cd $VWF; node node-server.js -l 100 -a $LIVELY
+CMD cd $LIVELY; \
+    forever start bin/lk-server.js -p 9001; \
+    cd $VWF; \
+    node node-server.js -l 100 -a $LIVELY
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # docker build --rm -t lively-vwf-server .
