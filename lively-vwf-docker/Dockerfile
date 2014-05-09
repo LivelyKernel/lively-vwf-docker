@@ -24,15 +24,16 @@ EXPOSE 8081
 EXPOSE 8082
 EXPOSE 8083
 
-CMD cd $LIVELY; \
-    forever start bin/lk-server.js -p $livelyport; \
-    cd $VWF; \
-    node node-server.js -p $vwfport -l 100 -a $LIVELY
+CMD cd $LIVELY; forever start bin/lk-server.js -p $livelyport; \
+    cd $VWF; node node-server.js -p $vwfport -l 100 -a ./$LIVELY
+
+# sleep 2; \
+# tail -f $HOME/.forever/`ls -t ~/.forever | egrep "*.log$" | head -n 1`
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # docker build --rm -t lively-vwf-server .
 # docker run -p 9001:9001 -p 3000:3000 -t -i lively-vwf-server
-# docker build --rm -t current-lively-vwf-server . && ./start-server.sh 9005 3006
+# docker build --rm -t lively-vwf-server . && ./start-server.sh 9005 3006
 
 # a checkout of this branch
 # git clone -b vwf-compat https://github.com/LivelyKernel/LivelyKernel.git public/lively
