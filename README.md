@@ -13,13 +13,13 @@ $ docker build --rm -t lively-server .
 
 ```sh
 $ cd
-$ docker build --rm -t old-lively-vwf-server .
+$ docker build --rm -t lively-vwf-server .
 ```
 
 3. Start server:
 
 ```sh
-$ docker run -p 9001:9001 -p 3000:3000 -t -i old-lively-vwf-server
+$ docker run -p 9001:9001 -p 3000:3000 -t -i lively-vwf-server
 ```
 
 4. Visit http://23.92.25.59:3000/
