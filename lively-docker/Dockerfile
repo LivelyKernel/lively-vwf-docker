@@ -2,11 +2,9 @@ FROM          dockerfile/nodejs
 MAINTAINER    Robert Krahn <robert.krahn@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
-RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get -y install curl git bzip2 unzip
-RUN apt-get install -y python-software-properties python
 
 # lively
 RUN mkdir -p /var/www/
