@@ -9,23 +9,33 @@ WORKDIR /var/www/vwf
 #RUN git checkout master
 RUN npm install
 
-# make lively load without deserialization
-ADD localconfig.js $LIVELY/core/lively/localconfig.js
+RUN cd $LIVELY; git pull --rebase origin master; npm install http-proxy;
 
 # apply patch to solve require() name clash
 ADD requirejs.patch $LIVELY/requirejs.patch
 RUN git apply --directory $LIVELY/ $LIVELY/requirejs.patch
 
+# make lively load without deserialization
+ADD localconfig.js $LIVELY/core/lively/localconfig.js
+
+# subserver that deals with vwf specific requests
+ADD VWFCompatServer.js /var/www/LivelyKernel/core/servers/VWFCompatServer.js
+
+# for debugging
+RUN npm install -g node-inspector
+RUN apt-get install lsof
+
+# ports
 ENV livelyport 9001
 ENV vwfport 3000
-
+ENV vwfapp /var/www/vwf/public
 EXPOSE 8080
 EXPOSE 8081
 EXPOSE 8082
 EXPOSE 8083
 
 CMD cd $LIVELY; forever start bin/lk-server.js -p $livelyport; \
-    cd $VWF; node node-server.js -p $vwfport -l 100 -a ./$LIVELY
+    cd $VWF; node node-server.js -p $vwfport -l 100 -a $vwfapp
 
 # sleep 2; \
 # tail -f $HOME/.forever/`ls -t ~/.forever | egrep "*.log$" | head -n 1`
