@@ -9,7 +9,7 @@ WORKDIR /var/www/vwf
 #RUN git checkout master
 RUN npm install
 
-RUN cd $LIVELY; git pull --rebase origin master; npm install http-proxy;
+RUN cd $LIVELY; git pull --rebase origin master
 
 # apply patch to solve require() name clash
 ADD requirejs.patch $LIVELY/requirejs.patch
@@ -21,12 +21,7 @@ ADD localconfig.js $LIVELY/core/lively/localconfig.js
 # subserver that deals with vwf specific requests
 ADD VWFCompatServer.js /var/www/LivelyKernel/core/servers/VWFCompatServer.js
 
-# for debugging
-RUN npm install -g node-inspector
-RUN apt-get install lsof
-
 # ports
-ENV livelyport 9001
 ENV vwfport 3000
 ENV vwfapp /var/www/vwf/public
 EXPOSE 8080
